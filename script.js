@@ -1,105 +1,91 @@
 class Student {
-  constructor(university, course, fullName) {
-    this.university = university;
-    this.course = course;
-    this.fullName = fullName;
-    this.marks = [];
-    this.status = 'студент';
+  constructor(university ,course ,fullName, marks = [5, 4, 4, 5] , isActive = true){
+      this.university = university,
+      this.course = course,
+      this.fullName = fullName,
+      this.marks = marks,
+      this.isActive = isActive
   }
-
-  getInfo() {
-    console.log(`\nCтудент ${this.course}го курсу, ${this.university}, ${this.fullName}`);
+  get getInfo() {
+      return `Студент ${this.course}-го курсу ${this.university}, ${this.fullName}`
   }
-
-  get getMarks() {
-    if (this.status === "виключено") {
-      console.log(`Студента ${this.fullName} виключено`);
-    } else {
-      console.log(`Усі оцінки студента ${this.fullName}: ${this.marks}`);
-    }
+  get getMarks(){
+      return this.marks;
   }
-
-  set setMarks(mark) {
-    if (this.status == "виключено") {
-      console.log(`Студента ${this.fullName} виключено`);
-    } else {
-      console.log('Додано оцінку', mark);
-      return this.marks.push(mark);
-    }
-  }
-
-  getAverageMark() {
-    if (this.status === "поновлено") {
-      let sum = 0;
-      for (let i in this.marks) {
-        sum += this.marks[i];
+  set setMarks(value){
+      if(this.isActive){ 
+          this.marks.push(value);
       }
-      const result = +(sum / this.marks.length).toFixed(1)
-      console.log(`Середній бал студента ${this.fullName} - ${result}`);
-      return result;
-    }
-    else {
-      console.log(`Студента ${this.fullName} виключено`);
-      } 
-    }
-
-  dismiss() {
-    this.status = "виключено";
-    console.log(`Статус студента ${this.fullName} - ${this.status}`);;
+      return this.marks; 
   }
-
-  recover() {
-    this.status = "поновлено"
-    console.log(`Статус студента ${this.fullName} - ${this.status}`);
+  get getAverageMark(){
+      if(!this.isActive){ 
+          return this.marks;
+      }
+      else{
+          return (this.marks.reduce((sum, el) => sum += el, 0)/this.marks.length);
+      }
   }
-}
-
-let ostap = new Student(
-  "Вищої Школи Психотерапії м.Одеса",
-  "1",
-  "Остап Родоманський Бендер"
-);
-
-ostap.getInfo();
-ostap.marks = [5, 4, 4, 5]
-ostap.getMarks;
-ostap.setMarks = 5;
-ostap.getMarks;
-ostap.getAverageMark();
-ostap.dismiss();
-ostap.recover();
-
-console.log("________Advanced________");
-
-class BudgetStudent extends Student {
-  constructor(university, course, fullName, superStatus) {
-    super(university, course, fullName);
-    this.superStatus = superStatus;
-    this.scholarship = 1400;
-    this.marks = [];
-    this.status = "студент";
-    setInterval(() => this.getScholarship(), 5000);
+  dismiss(){
+      this.isActive = false;
+      this.marksForRecover = [...this.marks]
+      this.marks = null;
   }
-  getScholarship() {
-    if (super.getAverageMark() >= 4 && this.superStatus === 'бютжет') {
-      console.log(`Ви, ${this.fullName}, отримали ${(this.scholarship)} грн. стипендії`);
-    }
-    else if (this.status != "студент") {
-      console.log(`Студента ${this.fullName} не існує`);
-    }
-    else {
-      console.log(`Середній бал студента ${this.fullName} занизький для отримання стипендії`);
-    }
+  recover(){
+      this.isActive = true;   
+      this.marks = this.marksForRecover;
   }
 }
-let op = new BudgetStudent("НУЛП", "2", "Гаррі Потер", "бютжет");
-op.getInfo();
-op.marks = [2, 3, 4, 2];
-op.getScholarship();
-console.log("___");
-op.dismiss();
-op.getScholarship();
-console.log("___");
-op.recover();
-op.marks = [5, 5, 4, 5];
-op.getScholarship();
+
+
+//1
+const Ostap = new Student('Вищої Школи Психотерапії м. Одеса', 1 ,'Остап Бендер');
+console.log("new Student('Вищої Школи Психотерапії м. Одеса', 1 ,'Остап Бендер') ==>", Ostap);
+
+//2
+console.log('Ostap.getInfo ==>', Ostap.getInfo);
+
+//3
+console.log('Ostap.getMarks ==>', Ostap.getMarks);
+
+//4
+Ostap.setMarks = 5;
+console.log('Ostap.setMarks = 5; Ostap.getMarks ==> ', Ostap.getMarks);
+
+//5
+console.log('Ostap.getAverageMark', Ostap.getAverageMark)
+
+//6
+Ostap.dismiss();
+console.log('Ostap.dismiss() ==> ', Ostap);
+
+Ostap.setMarks = 1;
+console.log('Ostap.setMarks = 1; Ostap.getMarks ==>', Ostap.getMarks);
+console.log('Ostap.getAverageMark ==>', Ostap.getAverageMark);
+console.log('Ostap.marks ==>', Ostap.marks);
+
+//7
+Ostap.recover();
+console.log('Ostap.recover() ==>', Ostap);
+
+//Advanced
+
+console.log('- Advanced -')
+
+class BudgetStudent extends Student{
+    constructor(university ,course ,fullName, isBudget, marks = [5, 4, 4, 5] , isActive = true){
+        super(university ,course ,fullName, marks = [5, 4, 4, 5] , isActive = true)
+        this.isBugget = isBudget,
+        setInterval(this.getScholarship, 3000);
+    }
+    getScholarship = () => {
+        if(this.isActive && (this.getAverageMark >= 4)){
+            console.log('Ви отримали 1400 грн. стипендії!');  
+        }else if(!this.isActive || this.getAverageMark < 4){
+            console.log("Ви не отримали стипендію")
+        }
+    }
+}
+
+const bug = new BudgetStudent('Вищої Школи Психотерапії м. Одеса', 2 ,'Остап Бендер', true);
+console.log("new BudgetStudent('Вищої Школи Психотерапії м. Одеса', 2 ,'Остап Бендер', true) ==>",bug);
