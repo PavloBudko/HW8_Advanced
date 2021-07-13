@@ -1,66 +1,79 @@
-//1.У стдентів повинні бути наступні властивост
+/* basic */
 
 class Student {
-    constructor(university, course, fullName) {
+    constructor (university, course, fullName, marks) {
         this.university = university;
         this.course = course;
         this.fullName = fullName;
-        this.marks = [5, 4, 4, 5]
-        this.dismiss = false;
+        this.marks = marks;
+        this.isActiveStudent = true;
     }
-    //2.Створіть метод this.getInfo()
 
-    get getInfo() {
-        return `Student ${this.course} cours, from ${this.university}, ${this.fullName}`;
+    getInfo() {
+        if (this.isActiveStudent) {
+            return `Студент ${this.course}го курсу ${this.university}, ${this.fullName}.`;
+        }
+        return `Дана особа не навчається Вищому навчальному закладі.`;
     }
-    //3.Створіть геттер оцінок this.marks
-    get getMarks() {
-        if (this.dismiss) return null
-        return this.marks
+    
+    get allMarks() {
+        if (this.isActiveStudent) {return this.marks;}
+        return null;
     }
-    //4.Створіть сеттер оцінок this.marks = 5
-    set setMarks(newMark) {
-        if (this.dismiss) return null
-        return this.marks.push(newMark);
+    
+    set mark(number) {
+        if (this.isActiveStudent) {return this.marks.push(number);}
+        return null;
     }
-    //5.Створіть метод отримання середнього балу this.getAverageMark()
-    get getAverageMark() {
+
+    getAverageMark() {
         let averageMarks = this.marks.reduce((a, b) => a + b)
         return averageMarks / this.marks.length
     }
-    //6.Створіть метод this.dismiss, який "виключить" студента
-    setDismiss() {
-        return this.dismiss ? this.dismiss = false : this.dismiss = true;
+    
+    dismiss() {
+        this.isActiveStudent = false;
     }
+
+    recover() {
+        this.isActiveStudent = true;
+    }
+
 }
 
-//Advanced
+/* Advance */
 
 class BudgetStudent extends Student {
-    constructor(university, course, fullName,scholarship) {
-        super(university, course, fullName)
-        this.scholarship = scholarship;
-        this.interval = setInterval(this.getScolarShip.bind(this), 5000)
-    }
-
-    getScolarShip() {
+    constructor (university, course, fullName, marks) {
         
-        if (!this.dismiss && this.getAverageMark >= 4) return console.log(`Ви отримали стиепндію ${this.scholarship} UAH `)
-        return
+        super(university, course, fullName, marks);
+        this.getScholarship = setInterval(() => {
+                if (this.getAverageMark() >= 4 && this.isActiveStudent) {
+                    console.log(`Ви отримали 1400 грн. стипендії.`);
+                }        
+            }, 10000);
     }
-
 }
+       
 
-const ostap = new Student('Вища Школа Психотерапії м.Одеса', 1, 'Остап Бендер')
-console.log('Task 2 : ',ostap.getInfo)
-ostap.setMarks=5
-console.log('Task 4 : ',ostap.getMarks)
-console.log('Task 5 : ',ostap.getAverageMark)
-ostap.setDismiss()
-console.log('Task 6 : ',ostap.getMarks)
-ostap.setDismiss()
-console.log('Task 6 : ',ostap.getMarks)
+const ostap = new Student("Вищої Школи Психотерапії м.Одеса", 1,
+                          "Остап Родоманський Бендер", [5, 4, 4, 5]);
+
+const roman = new BudgetStudent("Вища Школа Психотерапії м.Одеса", 5,
+                          "Остап Бендер", [5, 5, 5, 5]);
 
 
-const budgetOstap = new BudgetStudent('Вища Школа Психотерапії м.Одеса', 5, 'Остап Бендер',1400)
-console.log('Новий студент : ',budgetOstap)
+console.log('Виводимо інформацію про студента : ', ostap.getInfo());
+ostap.mark = 5;
+console.log('Виводимо інформацію про оцінки студента : ', ostap.allMarks);
+console.log('Виводимо інформацію про середню оцінку студента : ', ostap.getAverageMark());
+
+ostap.dismiss();
+console.log(`Виводимо інформацію після виключення студента : `, ostap.getInfo());
+
+
+ostap.recover();
+console.log(`Виводимо інформацію після поновлення студента : `, ostap.getInfo());
+
+
+console.log('Новий студент : ', roman)
